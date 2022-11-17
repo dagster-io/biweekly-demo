@@ -1,1 +1,1 @@
-from .repository import my_repo
+from .repository import my_repository

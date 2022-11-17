@@ -1,19 +1,14 @@
 with my_awesome_cte as (
         select
-                year,
                 country,
-                sum(thing) as something,
-                max(rank) as foo
+                sum(pop_2018) as something,
+                max(pop_2019) as foo
         from {{ ref("country_ranked_population") }}
-        group by 1, 2
+        group by 1
 ), even_better_cte as (
         select
-                year,
-                country,
-                sum(thing) as something
-                max(rank) as bar
+                sum(pop_2018) as something,
+                max(pop_2019) as bar
         from {{ ref("continent_ranked_population") }}
-        group by 1, 2
 )
-select * from my_awesome_cte mc full outer join even_better_cte ec
-on mc.year = ec.year
+select * from my_awesome_cte

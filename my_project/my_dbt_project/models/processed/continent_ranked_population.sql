@@ -1,1 +1,1 @@
-select * from {{ source("raw", "continent_population") }}
+select * from {{ source("ben", "continent_population") }}

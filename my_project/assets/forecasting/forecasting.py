@@ -8,40 +8,43 @@ daily_partitions = DailyPartitionsDefinition(start_date="2022-06-01")
 
 
 @asset(
-    compute_kind="feature_tool",
-    ins={"continent_population": AssetIn(["raw", "continent_population"])},
+    ins={"continent_population": AssetIn(["ben", "continent_population"])},
 )
-def continent_feature(continent_population):
+def continent_feature(continent_population: pd.DataFrame) -> pd.DataFrame:
     """Feature based on continent population data"""
     time.sleep(3)
+    return pd.DataFrame([{"foo": "bar"}])
 
 
 @asset(
-    compute_kind="feature_tool",
-    ins={"country_population": AssetIn(["raw", "country_population"])},
+    ins={"country_population": AssetIn(["ben", "country_population"])},
 )
-def country_feature(country_population):
+def country_feature(country_population: pd.DataFrame) -> pd.DataFrame:
     """Feature based on country population data"""
     time.sleep(1)
+    return pd.DataFrame([{"foo": "bar"}])
 
 
-@asset(compute_kind="ml_tool")
-def population_forecast_model(continent_feature, country_feature) -> Any:
+@asset()
+def population_forecast_model(
+    continent_feature: pd.DataFrame, country_feature: pd.DataFrame
+) -> pd.DataFrame:
     """Trained ML model for forecasting population"""
     time.sleep(5)
+    return pd.DataFrame([{"foo": "bar"}])
 
 
-@asset(compute_kind="ml_tool")
+@asset()
 def forecasted_population(
     context,
-    population_forecast_model,  # : Tuple[float, float],
+    population_forecast_model: pd.DataFrame,  # : Tuple[float, float],
 ) -> pd.DataFrame:
     """Table containing forecasted population data"""
     import random
     from dagster import Output
 
     yield Output(
-        None,
+        pd.DataFrame([{"foo": "bar"}]),
         metadata={
             "param_value": int((random.random() / 2 + 0.5)),
             "accuracy": (65 - (10 * random.random()) + 1 / 6) / 100.0,

@@ -136,7 +136,7 @@ jobs:
         with:
           location: ${{ toJson(matrix.location) }}
           deployment: ${{ steps.deploy.outputs.deployment }}
-          repository: my_repo
+          repository: my_repository
           job: scaffold_cloud_resources
         env:
           DAGSTER_CLOUD_API_TOKEN: ${{ secrets.DAGSTER_CLOUD_API_TOKEN }}
