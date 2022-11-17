@@ -16,7 +16,4 @@ from my_project.assets import population, forecasting
 
 @repository
 def my_repository():
-    population_assets = load_assets_from_package_module(
-        population, group_name="population", key_prefix="ben"
-    )
-    return [population_assets]
+    return []
