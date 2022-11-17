@@ -18,20 +18,15 @@ from dagster_snowflake_pandas import SnowflakePandasTypeHandler
 
 snowflake_io_manager = build_snowflake_io_manager([SnowflakePandasTypeHandler()])
 
-DBT_PROJECT_DIR = file_relative_path(__file__, "./my_dbt_project")
-
 
 @repository
 def my_repository():
     population_assets = load_assets_from_package_module(
         population, group_name="population", key_prefix="ben"
     )
-    transformation_assets = load_assets_from_dbt_project(
-        project_dir=DBT_PROJECT_DIR, profiles_dir=DBT_PROJECT_DIR, key_prefix="ben"
-    )
     return [
         with_resources(
-            population_assets + transformation_assets,
+            population_assets,
             {
                 "io_manager": snowflake_io_manager.configured(
                     {
@@ -41,9 +36,6 @@ def my_repository():
                         "database": "SANDBOX",
                         "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE"),
                     }
-                ),
-                "dbt": dbt_cli_resource.configured(
-                    {"project_dir": DBT_PROJECT_DIR, "profiles_dir": DBT_PROJECT_DIR}
                 ),
             },
         ),
