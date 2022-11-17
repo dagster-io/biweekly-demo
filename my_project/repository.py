@@ -29,12 +29,9 @@ def my_repository():
     transformation_assets = load_assets_from_dbt_project(
         project_dir=DBT_PROJECT_DIR, profiles_dir=DBT_PROJECT_DIR, key_prefix="ben"
     )
-    forecasting_assets = load_assets_from_package_module(
-        forecasting, group_name="forecasting", key_prefix="ben"
-    )
     return [
         with_resources(
-            population_assets + transformation_assets + forecasting_assets,
+            population_assets + transformation_assets,
             {
                 "io_manager": snowflake_io_manager.configured(
                     {
@@ -49,12 +46,5 @@ def my_repository():
                     {"project_dir": DBT_PROJECT_DIR, "profiles_dir": DBT_PROJECT_DIR}
                 ),
             },
-        ),
-        ScheduleDefinition(
-            job=define_asset_job(
-                "update_forecast",
-                selection=AssetSelection.keys(["ben", "forecasted_population"]).upstream(),
-            ),
-            cron_schedule="@hourly",
         ),
     ]
