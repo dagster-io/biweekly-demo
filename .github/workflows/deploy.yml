@@ -1,0 +1,102 @@
+name: Dagster Prod Deploy
+on:
+  push:
+    branches:
+      - 'main'
+env:
+  DAGSTER_CLOUD_URL: ${{ secrets.DAGSTER_CLOUD_URL }}
+
+jobs:
+  # Reads the list of locations to build from the cloud workspace file
+  load_build_info:
+    runs-on: ubuntu-latest
+    outputs:
+      build_info: ${{ steps.load-build-info.outputs.build_info }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Load build info
+        id: load-build-info
+        uses: dagster-io/cloud-branch-deployments-action/load_build_info@v0.2.1
+        with:
+          dagster_cloud_file: cloud_workspace.yaml
+
+  # Build, push, deploy each location
+  dagster_cloud_build_push:
+    runs-on: ubuntu-latest
+    needs: load_build_info
+    name: Dagster Branch Deployments
+    strategy:
+      fail-fast: false
+      # Iterate over every location discovered in the cloud workspace file
+      matrix:
+        location: ${{ fromJSON(needs.load_build_info.outputs.build_info) }}
+    permissions:
+      pull-requests: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2
+
+      - name: Login to ECR
+        uses: aws-actions/amazon-ecr-login@v1
+
+      ## DockerHub
+      ## https://github.com/docker/login-action#docker-hub
+      # - name: Login to Docker Hub
+      #   uses: docker/login-action@v1
+      #   with:
+      #     username: ${{ secrets.DOCKERHUB_USERNAME }}
+      #     password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      ## GitHub Container Registry
+      ## https://github.com/docker/login-action#github-container-registry
+      # - name: Login to GitHub Container Registry
+      #   uses: docker/login-action@v1
+      #   with:
+      #     registry: ghcr.io
+      #     username: ${{ github.actor }}
+      #     password: ${{ secrets.GITHUB_TOKEN }}
+
+      ## GCR
+      ## https://github.com/docker/login-action#google-container-registry-gcr
+      # - name: Login to GCR
+      #   uses: docker/login-action@v1
+      #   with:
+      #     registry: gcr.io
+      #     username: _json_key
+      #     password: ${{ secrets.GCR_JSON_KEY }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v3
+        with:
+          context: ${{ matrix.location.directory }}
+          push: true
+          tags: "${{ matrix.location.registry }}:${{ github.sha }}"
+          labels: |
+            branch=${{ github.head_ref }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Deploy to Dagster Cloud
+        uses: dagster-io/cloud-branch-deployments-action/deploy@v0.2.1
+        id: deploy
+        with:
+          organization_id: ${{ secrets.ORGANIZATION_ID }}
+          deployment: prod
+          pr: "${{ github.event.number }}"
+          location: ${{ toJson(matrix.location) }}
+          image_tag: ${{ github.sha }}
+        env:
+          DAGSTER_CLOUD_API_TOKEN: ${{ secrets.DAGSTER_CLOUD_API_TOKEN }}
