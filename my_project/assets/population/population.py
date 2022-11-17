@@ -13,11 +13,3 @@ def country_population() -> pd.DataFrame:
 
     df.columns = ["country", "region", "subregion", "pop_2018", "pop_2019", "pct_change"]
     return df
-
-
-@asset
-def continent_population(country_population: pd.DataFrame) -> pd.DataFrame:
-    """
-    Population by continent.
-    """
-    return country_population.groupby("region").sum()
