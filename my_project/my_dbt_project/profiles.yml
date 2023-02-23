@@ -10,5 +10,5 @@ my_dbt_project:
 
       database: "SANDBOX"
       warehouse: "{{ env_var('SNOWFLAKE_WAREHOUSE') }}"
-      schema: "BEN"
+      schema: "{{ env_var('SNOWFLAKE_SCHEMA') }}"
       client_session_keep_alive: False

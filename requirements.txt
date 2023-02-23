@@ -1,8 +1,0 @@
-lxml
-dagster
-dagster-cloud
-dagit
-pytest
-dbt-duckdb
-pandas
-dagster-dbt
