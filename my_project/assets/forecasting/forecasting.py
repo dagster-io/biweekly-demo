@@ -1,31 +1,44 @@
 from typing import Any, Tuple
 
 import pandas as pd
-from dagster import AssetIn, asset, DailyPartitionsDefinition
+from dagster import AssetIn, asset, DailyPartitionsDefinition, Output, FreshnessPolicy
 import time
 
-daily_partitions = DailyPartitionsDefinition(start_date="2022-06-01")
+import random
+
+daily_partitions = DailyPartitionsDefinition(start_date="2023-04-01")
 
 
 @asset(
-    ins={"continent_population": AssetIn(["ben", "continent_population"])},
+    ins={"continent_population": AssetIn(["population", "continent_population"])},
+    compute_kind="DuckDB",
+    partitions_def=daily_partitions,
+    metadata={"partition_expr": "date"},
 )
-def continent_feature(continent_population: pd.DataFrame) -> pd.DataFrame:
+def continent_feature(context, continent_population: pd.DataFrame) -> pd.DataFrame:
     """Feature based on continent population data"""
+    partition_date_str = context.asset_partition_key_for_output()
+
     time.sleep(3)
-    return pd.DataFrame([{"foo": "bar"}])
+    return pd.DataFrame([{"foo": "bar", "date": partition_date_str }])
 
 
 @asset(
-    ins={"country_population": AssetIn(["ben", "country_population"])},
+    ins={"country_population": AssetIn(["population", "country_population"])},
+    compute_kind="DuckDB",
+    partitions_def=daily_partitions,
+    metadata={"partition_expr": "date"},
 )
-def country_feature(country_population: pd.DataFrame) -> pd.DataFrame:
+def country_feature(context, country_population: pd.DataFrame) -> pd.DataFrame:
     """Feature based on country population data"""
+    partition_date_str = context.asset_partition_key_for_output()
+
     time.sleep(1)
-    return pd.DataFrame([{"foo": "bar"}])
+    return pd.DataFrame([{"foo": "bar", "date": partition_date_str }])
 
-
-@asset()
+@asset(
+    compute_kind="ML Tool",
+)
 def population_forecast_model(
     continent_feature: pd.DataFrame, country_feature: pd.DataFrame
 ) -> pd.DataFrame:
@@ -34,14 +47,14 @@ def population_forecast_model(
     return pd.DataFrame([{"foo": "bar"}])
 
 
-@asset()
+@asset(
+    freshness_policy=FreshnessPolicy(maximum_lag_minutes=24 * 60),
+    compute_kind="Python"
+)
 def forecasted_population(
-    context,
-    population_forecast_model: pd.DataFrame,  # : Tuple[float, float],
+    population_forecast_model: pd.DataFrame
 ) -> pd.DataFrame:
     """Table containing forecasted population data"""
-    import random
-    from dagster import Output
 
     yield Output(
         pd.DataFrame([{"foo": "bar"}]),

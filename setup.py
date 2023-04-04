@@ -7,6 +7,7 @@ setuptools.setup(
         "dagster",
         "dagster-cloud",
         "dagster-dbt",
+        "dagster_duckdb_pandas",
         "dagster_snowflake",
         "dagster_snowflake_pandas",
         "dagster_dbt",

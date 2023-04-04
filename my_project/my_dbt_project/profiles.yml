@@ -2,6 +2,9 @@ my_dbt_project:
   target: local
   outputs:
     local:
+      type: duckdb
+      path: "{{ env_var('DUCKDB_PATH') }}"
+    prod:
       type: snowflake
       account: "{{ env_var('SNOWFLAKE_ACCOUNT') }}"
 

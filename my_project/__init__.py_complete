@@ -1,0 +1,70 @@
+import os
+from dagster import (
+    load_assets_from_package_module,
+    Definitions,
+    ScheduleDefinition,
+    define_asset_job,
+    AssetSelection
+)
+from dagster_dbt import load_assets_from_dbt_project, dbt_cli_resource
+
+from dagster._utils import file_relative_path
+
+from my_project.assets import population_complete, forecasting
+
+from dagster_duckdb_pandas import duckdb_pandas_io_manager
+from dagster_snowflake import build_snowflake_io_manager
+from dagster_snowflake_pandas import SnowflakePandasTypeHandler
+
+DBT_PROJECT_DIR = file_relative_path(__file__, "./my_dbt_project")
+
+ENVIRONMENT = "local"
+
+population_assets = load_assets_from_package_module(
+    population_complete, group_name="population", key_prefix="population"
+)
+
+transformation_assets = load_assets_from_dbt_project(
+    project_dir=DBT_PROJECT_DIR, profiles_dir=DBT_PROJECT_DIR
+)
+
+forecasting_assets = load_assets_from_package_module(
+    forecasting, group_name="forecasting"
+)
+
+dbt_resource = dbt_cli_resource.configured({
+    "project_dir": DBT_PROJECT_DIR,
+    "profiles_dir": DBT_PROJECT_DIR
+})
+
+resources = {
+    "local": {
+        "io_manager": duckdb_pandas_io_manager.configured({
+            "database": "analytics"
+        }),
+        "dbt": dbt_resource
+    },
+    "prod": {
+        "io_manager": build_snowflake_io_manager([SnowflakePandasTypeHandler()]).configured(
+            {
+                "account": os.getenv("SNOWFLAKE_ACCOUNT"),
+                "user": os.getenv("SNOWFLAKE_USER"),
+                "password": os.getenv("SNOWFLAKE_PASSWORD"),
+                "database": "SANDBOX",
+                "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE"),
+            }
+        ),
+        "dbt": dbt_resource
+    }
+}
+
+defs = Definitions(
+    assets=population_assets + transformation_assets + forecasting_assets,
+    resources=resources[ENVIRONMENT],
+    schedules=[
+        ScheduleDefinition(
+            job=define_asset_job("update_forecast", selection=AssetSelection.groups("population")),
+            cron_schedule="@daily",
+        ),
+    ],
+)
