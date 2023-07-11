@@ -1,0 +1,8 @@
+[32m2023-07-11 14:26:30 -0400[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 3028541d-42de-455f-89c7-f61e6a0bda59 - 24613 - LOGS_CAPTURED - Started capturing logs in process (pid: 24613).
+[32m2023-07-11 14:26:30 -0400[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 3028541d-42de-455f-89c7-f61e6a0bda59 - 24613 - country_feature - STEP_START - Started execution of step "country_feature".
+[32m2023-07-11 14:26:31 -0400[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 3028541d-42de-455f-89c7-f61e6a0bda59 - 24613 - country_feature - LOADED_INPUT - Loaded input "country_population" using input manager "io_manager", from output "result" of step "country_population"
+[32m2023-07-11 14:26:31 -0400[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 3028541d-42de-455f-89c7-f61e6a0bda59 - 24613 - country_feature - STEP_INPUT - Got input "country_population" of type "DataFrame". (Type check passed).
+[32m2023-07-11 14:26:32 -0400[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 3028541d-42de-455f-89c7-f61e6a0bda59 - 24613 - country_feature - STEP_OUTPUT - Yielded output "result" of type "DataFrame". (Type check passed).
+[32m2023-07-11 14:26:36 -0400[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 3028541d-42de-455f-89c7-f61e6a0bda59 - 24613 - country_feature - ASSET_MATERIALIZATION - Materialized value odette country_feature.
+[32m2023-07-11 14:26:36 -0400[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 3028541d-42de-455f-89c7-f61e6a0bda59 - 24613 - country_feature - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
+[32m2023-07-11 14:26:36 -0400[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 3028541d-42de-455f-89c7-f61e6a0bda59 - 24613 - country_feature - STEP_SUCCESS - Finished execution of step "country_feature" in 4.93s.

@@ -20,15 +20,15 @@ snowflake_io_manager = build_snowflake_io_manager([SnowflakePandasTypeHandler()]
 DBT_PROJECT_DIR = file_relative_path(__file__, "./my_dbt_project")
 
 population_assets = load_assets_from_package_module(
-    population, group_name="population", key_prefix="ben"
+    population, group_name="population", key_prefix="odette"
 )
 
 transformation_assets = load_assets_from_dbt_project(
-    project_dir=DBT_PROJECT_DIR, profiles_dir=DBT_PROJECT_DIR, key_prefix="ben"
+    project_dir=DBT_PROJECT_DIR, profiles_dir=DBT_PROJECT_DIR, key_prefix="odette"
 )
 
 forecasting_assets = load_assets_from_package_module(
-    forecasting, group_name="forecasting", key_prefix="ben"
+    forecasting, group_name="forecasting", key_prefix="odette"
 )
 
 defs = Definitions(
@@ -41,6 +41,7 @@ defs = Definitions(
                 "password": os.getenv("SNOWFLAKE_PASSWORD"),
                 "database": "SANDBOX",
                 "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE"),
+                "role": os.getenv("ROLE")
             }
         ),
         "dbt": dbt_cli_resource.configured(

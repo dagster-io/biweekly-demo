@@ -1,0 +1,6 @@
+[32m2023-07-11 14:26:19 -0400[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 3028541d-42de-455f-89c7-f61e6a0bda59 - 24532 - LOGS_CAPTURED - Started capturing logs in process (pid: 24532).
+[32m2023-07-11 14:26:19 -0400[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 3028541d-42de-455f-89c7-f61e6a0bda59 - 24532 - country_population - STEP_START - Started execution of step "country_population".
+[32m2023-07-11 14:26:19 -0400[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 3028541d-42de-455f-89c7-f61e6a0bda59 - 24532 - country_population - STEP_OUTPUT - Yielded output "result" of type "DataFrame". (Type check passed).
+[32m2023-07-11 14:26:24 -0400[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 3028541d-42de-455f-89c7-f61e6a0bda59 - 24532 - country_population - ASSET_MATERIALIZATION - Materialized value odette country_population.
+[32m2023-07-11 14:26:24 -0400[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 3028541d-42de-455f-89c7-f61e6a0bda59 - 24532 - country_population - HANDLED_OUTPUT - Handled output "result" using IO manager "io_manager"
+[32m2023-07-11 14:26:24 -0400[0m - dagster - [34mDEBUG[0m - __ASSET_JOB - 3028541d-42de-455f-89c7-f61e6a0bda59 - 24532 - country_population - STEP_SUCCESS - Finished execution of step "country_population" in 5.37s.
