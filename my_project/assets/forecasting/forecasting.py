@@ -8,7 +8,7 @@ daily_partitions = DailyPartitionsDefinition(start_date="2022-06-01")
 
 
 @asset(
-    ins={"continent_population": AssetIn(["ben", "continent_population"])},
+    ins={"continent_population": AssetIn(["odette", "continent_population"])},
 )
 def continent_feature(continent_population: pd.DataFrame) -> pd.DataFrame:
     """Feature based on continent population data"""
@@ -17,7 +17,7 @@ def continent_feature(continent_population: pd.DataFrame) -> pd.DataFrame:
 
 
 @asset(
-    ins={"country_population": AssetIn(["ben", "country_population"])},
+    ins={"country_population": AssetIn(["odette", "country_population"])},
 )
 def country_feature(country_population: pd.DataFrame) -> pd.DataFrame:
     """Feature based on country population data"""
