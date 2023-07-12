@@ -11,13 +11,14 @@ from dagster_dbt import load_assets_from_dbt_project, dbt_cli_resource
 from dagster._utils import file_relative_path
 
 from my_project.assets import population, forecasting
-
+from dagster_dbt import DbtCliClientResource
 from dagster_snowflake import build_snowflake_io_manager
 from dagster_snowflake_pandas import SnowflakePandasTypeHandler
 
 snowflake_io_manager = build_snowflake_io_manager([SnowflakePandasTypeHandler()])
 
 DBT_PROJECT_DIR = file_relative_path(__file__, "./my_dbt_project")
+DBT_PROFILE_DIR = file_relative_path(__file__, "./my_dbt_project/profiles")
 
 population_assets = load_assets_from_package_module(
     population, group_name="population", key_prefix="odette"
@@ -44,9 +45,8 @@ defs = Definitions(
                 "role": os.getenv("ROLE")
             }
         ),
-        "dbt": dbt_cli_resource.configured(
-            {"project_dir": DBT_PROJECT_DIR, "profiles_dir": DBT_PROJECT_DIR}
-        ),
+        "dbt": DbtCliClientResource(project_dir=DBT_PROJECT_DIR, profiles_dir=DBT_PROJECT_DIR)
+
     },
     schedules=[
         ScheduleDefinition(
