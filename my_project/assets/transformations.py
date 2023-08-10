@@ -9,7 +9,6 @@ from pathlib import Path
 # dbt_manifest_path = dbt_parse_invocation.target_path.joinpath("../manifest.json")
 
 dbt_manifest_path = Path("./dbt_project/target/manifest.json")
-#turnn dbt_manifest_path into a Path object
 
 @dbt_assets(manifest=dbt_manifest_path)
 def dbt_assets(context: OpExecutionContext, dbt: DbtCliResource):
