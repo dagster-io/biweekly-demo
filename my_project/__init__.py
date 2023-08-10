@@ -8,6 +8,7 @@ from dagster import (
 )
 
 from my_project.assets import population_complete, forecasting, transformations
+from my_project.resources import resources
 
 population_assets = load_assets_from_modules(
     [population_complete],
